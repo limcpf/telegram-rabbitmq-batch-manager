@@ -2,13 +2,24 @@ name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+
+    - name: Set up GraalVM
+      uses: graalvm/setup-graalvm@v1
+      with:
+        java-version: '21'
+        distribution: 'graalvm'
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build Native Image
+      run: ./mvnw package -Pnative -Dquarkus.native.container-build=false
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
@@ -20,8 +31,8 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: src/main/docker/Dockerfile.multistage
+        file: src/main/docker/Dockerfile.native-micro
         push: true
         tags: |
           ${{ secrets.DOCKER_USERNAME }}/batch-service:latest
-          ${{ secrets.DOCKER_USERNAME }}/batch-service:${{ github.sha }}
+          ${{ secrets.DOCKER_USERNAME }}/batch-service:${{ github.ref_name }}

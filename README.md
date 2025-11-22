@@ -44,10 +44,28 @@ docker run -d \
   -p 8080:8080 \
   -e AMQP_HOST=host.docker.internal \
   -e TELEGRAM_BOT_TOKEN=your_token \
-  -v $(pwd)/batch-data:/work \
+  -v $(pwd)/batch-data:/work/data \
   your-docker-user/batch-service:latest
 ```
-> **참고**: `-v $(pwd)/batch-data:/work` 옵션을 사용하면 배치 등록 정보(`batch-jobs.json`)가 호스트의 `batch-data` 폴더에 저장되어, 컨테이너를 재시작해도 데이터가 유지됩니다.
+> **참고**: `-v $(pwd)/batch-data:/work/data` 옵션을 사용하면 배치 등록 정보(`batch-jobs.json`)가 호스트의 `batch-data` 폴더에 저장되어, 컨테이너를 재시작해도 데이터가 유지됩니다.
+
+### 설정 관리 (Configuration)
+Docker 환경에서 `application.properties`를 관리하는 방법은 두 가지가 있습니다.
+
+**1. 환경 변수 사용 (권장)**
+Quarkus는 환경 변수를 자동으로 속성에 매핑합니다. 가장 간편한 방법입니다.
+- `amqp-host` -> `AMQP_HOST`
+- `telegram-bot-token` -> `TELEGRAM_BOT_TOKEN`
+- `quarkus.http.port` -> `QUARKUS_HTTP_PORT`
+
+**2. 설정 파일 마운트**
+호스트의 `application.properties` 파일을 컨테이너 내부로 마운트하여 덮어쓸 수 있습니다.
+```bash
+docker run -d \
+  -v $(pwd)/config/application.properties:/work/config/application.properties \
+  ...
+```
+Quarkus는 실행 위치의 `config/application.properties`를 우선적으로 읽습니다.
 
 ### 헬스 체크
 - Liveness: `http://localhost:8080/q/health/live`

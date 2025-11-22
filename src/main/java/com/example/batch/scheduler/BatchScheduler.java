@@ -22,10 +22,16 @@ public class BatchScheduler {
     com.fasterxml.jackson.databind.ObjectMapper objectMapper;
 
     private final Map<String, BatchJob> jobs = new ConcurrentHashMap<>();
-    private final java.nio.file.Path storagePath = java.nio.file.Paths.get("batch-jobs.json");
+    private final java.nio.file.Path storagePath = java.nio.file.Paths.get("data", "batch-jobs.json");
 
     @jakarta.annotation.PostConstruct
     void init() {
+        // Ensure data directory exists
+        try {
+            java.nio.file.Files.createDirectories(storagePath.getParent());
+        } catch (Exception e) {
+            System.err.println("데이터 디렉토리 생성 실패: " + e.getMessage());
+        }
         loadJobs();
     }
 
