@@ -1,62 +1,47 @@
-# batch-service
+# 텔레그램 RabbitMQ 배치 서비스
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+Quarkus 기반의 경량 배치 서비스로, 텔레그램을 통해 배치 작업을 관리하고 RabbitMQ로 메시지를 전송합니다.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## 기능
+- **텔레그램 봇 관리**: 텔레그램 채팅을 통해 배치를 등록, 삭제, 조회, 실행할 수 있습니다.
+- **RabbitMQ 연동**: 스케줄링된 작업이나 수동 명령을 통해 RabbitMQ로 메시지를 발행합니다.
+- **동적 스케줄링**: 크론 표현식을 사용하여 런타임에 작업을 예약합니다.
+- **네이티브 빌드**: GraalVM을 사용하여 경량 네이티브 이미지로 빌드됩니다.
 
-## Running the application in dev mode
+## 시작하기
 
-You can run your application in dev mode that enables live coding using:
+### 필수 조건
+- JDK 21+
+- Docker (RabbitMQ 실행용)
+- Telegram Bot Token
 
-```shell script
-./mvnw quarkus:dev
+### 로컬 실행
+1. RabbitMQ 실행:
+   ```bash
+   docker run -d --hostname my-rabbit --name some-rabbit -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+   ```
+2. `application.properties` 설정:
+   `src/main/resources/application.properties`에서 `telegram-bot-token`을 설정하거나 환경 변수로 주입하세요.
+3. 앱 실행:
+   ```bash
+   ./mvnw quarkus:dev
+   ```
+
+### 텔레그램 명령어
+- `/new {이름} {크론} {메시지}`: 새로운 배치 등록
+  - 예: `/new myjob "0/10 * * * * ?" Hello World` (10초마다 "Hello World" 전송)
+- `/remove {이름}`: 배치 삭제
+- `/list {개수}`: 등록된 배치 목록 조회
+- `/exec {이름}`: 배치 즉시 실행
+- `/send {메시지}`: RabbitMQ로 메시지 즉시 전송
+
+## 배포
+GitHub Actions를 통해 main 브랜치 푸시 시 자동으로 네이티브 이미지를 빌드하고 Docker Hub에 푸시합니다.
+
+### Docker 실행
+```bash
+docker run -d \
+  -e AMQP_HOST=host.docker.internal \
+  -e TELEGRAM_BOT_TOKEN=your_token \
+  your-docker-user/batch-service:latest
 ```
-
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/batch-service-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
