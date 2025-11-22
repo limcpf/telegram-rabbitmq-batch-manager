@@ -21,9 +21,8 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
     @Inject
     com.example.batch.rabbitmq.BatchProducer producer;
 
-    // We will inject the scheduler service later
-    // @Inject
-    // BatchScheduler batchScheduler;
+    @Inject
+    com.example.batch.scheduler.BatchScheduler batchScheduler;
 
     @Override
     public String getBotUsername() {
@@ -43,14 +42,19 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
             String[] parts = messageText.split("\\s+");
             String command = parts[0];
 
-            String response = switch (command) {
-                case "/new" -> handleNew(parts);
-                case "/remove" -> handleRemove(parts);
-                case "/list" -> handleList(parts);
-                case "/exec" -> handleExec(parts);
-                case "/send" -> handleSend(parts);
-                default -> "알 수 없는 명령어입니다: " + command;
-            };
+            String response;
+            try {
+                response = switch (command) {
+                    case "/new" -> handleNew(parts);
+                    case "/remove" -> handleRemove(parts);
+                    case "/list" -> handleList(parts);
+                    case "/exec" -> handleExec(parts);
+                    case "/send" -> handleSend(parts);
+                    default -> "알 수 없는 명령어입니다: " + command;
+                };
+            } catch (Exception e) {
+                response = "오류 발생: " + e.getMessage();
+            }
 
             sendMessage(chatId, response);
         }
@@ -63,7 +67,7 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
         String name = parts[1];
         String cron = parts[2];
         String message = String.join(" ", Arrays.copyOfRange(parts, 3, parts.length));
-        // TODO: Schedule job
+        batchScheduler.schedule(name, cron, message);
         return "배치 등록됨: " + name;
     }
 
@@ -72,7 +76,7 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
             return "사용법: /remove {이름}";
         }
         String name = parts[1];
-        // TODO: Remove job
+        batchScheduler.remove(name);
         return "배치 삭제됨: " + name;
     }
 
@@ -85,8 +89,7 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
                 return "유효하지 않은 숫자입니다.";
             }
         }
-        // TODO: List jobs
-        return "배치 목록 (최대 " + limit + "개):\n(구현 중)";
+        return batchScheduler.list(limit);
     }
 
     private String handleExec(String[] parts) {
@@ -94,7 +97,7 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
             return "사용법: /exec {이름}";
         }
         String name = parts[1];
-        // TODO: Execute job
+        batchScheduler.execute(name);
         return "배치 실행됨: " + name;
     }
 
