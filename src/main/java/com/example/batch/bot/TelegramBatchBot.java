@@ -18,6 +18,9 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
     @ConfigProperty(name = "telegram-bot-token")
     String botToken;
 
+    @Inject
+    com.example.batch.rabbitmq.BatchProducer producer;
+
     // We will inject the scheduler service later
     // @Inject
     // BatchScheduler batchScheduler;
@@ -100,7 +103,7 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
             return "사용법: /send {메시지}";
         }
         String message = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
-        // TODO: Send message directly
+        producer.send(message);
         return "메시지 전송됨: " + message;
     }
 
