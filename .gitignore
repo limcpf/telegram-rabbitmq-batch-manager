@@ -5,12 +5,14 @@ pom.xml.releaseBackup
 pom.xml.versionsBackup
 release.properties
 .flattened-pom.xml
+build/
 
 # Eclipse
 .project
 .classpath
 .settings/
 bin/
+out/
 
 # IntelliJ
 .idea
@@ -24,13 +26,26 @@ nb-configuration.xml
 # Visual Studio Code
 .vscode
 .factorypath
+*.code-workspace
 
 # OSX
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+Icon?
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
 # Vim
 *.swp
 *.swo
+*~
 
 # patch
 *.orig
@@ -38,8 +53,24 @@ nb-configuration.xml
 
 # Local environment
 .env
+.env.*
+.envrc
+.direnv
+.tool-versions
 
 # Plugin directory
 /.quarkus/cli/plugins/
+# Quarkus local dir
+.quarkus/
 # TLS Certificates
 .certs/
+
+# Java / JVM
+*.class
+*.hprof
+hs_err_pid*
+replay_pid*
+*.tmp
+*.bak
+*.backup
+*.log
