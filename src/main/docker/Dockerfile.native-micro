@@ -21,7 +21,8 @@
 ###
 FROM quay.io/quarkus/ubi9-quarkus-micro-image:2.0
 USER root
-RUN microdnf install -y curl && microdnf clean all
+# NOTE: UBI micro images do not provide a package manager.
+# Do not attempt to install packages (e.g., curl) here.
 WORKDIR /work/
 RUN chown 1001 /work \
     && chmod "g+rwX" /work \
@@ -34,7 +35,8 @@ USER 1001
 # Persistence volume
 VOLUME /work/data
 
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:8080/q/health || exit 1
+# If you need a container-native healthcheck, either:
+# - switch to a non-micro base (e.g., UBI minimal) and install curl, or
+# - configure an external healthcheck from your orchestrator (Compose/K8s).
 
 ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
