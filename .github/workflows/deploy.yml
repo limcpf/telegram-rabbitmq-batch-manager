@@ -23,6 +23,14 @@ jobs:
     - name: Build Native Image
       run: ./mvnw package -Pnative -Dquarkus.native.container-build=false
 
+    - name: Prepare lowercase Docker namespace
+      shell: bash
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      run: |
+        # Docker image names must be lowercase
+        echo "DOCKER_NS=${DOCKER_USERNAME,,}" >> "$GITHUB_ENV"
+
     - name: Log in to Docker Hub
       uses: docker/login-action@v3
       with:
@@ -36,5 +44,5 @@ jobs:
         file: src/main/docker/Dockerfile.native-micro
         push: true
         tags: |
-          ${{ secrets.DOCKER_USERNAME }}/batch-service:latest
-          ${{ secrets.DOCKER_USERNAME }}/batch-service:${{ github.ref_name }}
+          ${{ env.DOCKER_NS }}/batch-service:latest
+          ${{ env.DOCKER_NS }}/batch-service:${{ github.ref_name }}
