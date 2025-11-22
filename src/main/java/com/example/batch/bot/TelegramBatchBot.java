@@ -61,14 +61,15 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
     }
 
     private String handleNew(String[] parts) {
-        if (parts.length < 4) {
-            return "사용법: /new {이름} {크론} {메시지}";
+        if (parts.length < 5) {
+            return "사용법: /new {이름} {크론} {라우팅키} {메시지}";
         }
         String name = parts[1];
         String cron = parts[2];
-        String message = String.join(" ", Arrays.copyOfRange(parts, 3, parts.length));
-        batchScheduler.schedule(name, cron, message);
-        return "배치 등록됨: " + name;
+        String routingKey = parts[3];
+        String message = String.join(" ", Arrays.copyOfRange(parts, 4, parts.length));
+        batchScheduler.schedule(name, cron, routingKey, message);
+        return "배치 등록됨: " + name + " (Key: " + routingKey + ")";
     }
 
     private String handleRemove(String[] parts) {
@@ -102,12 +103,13 @@ public class TelegramBatchBot extends TelegramLongPollingBot {
     }
 
     private String handleSend(String[] parts) {
-        if (parts.length < 2) {
-            return "사용법: /send {메시지}";
+        if (parts.length < 3) {
+            return "사용법: /send {라우팅키} {메시지}";
         }
-        String message = String.join(" ", Arrays.copyOfRange(parts, 1, parts.length));
-        producer.send(message);
-        return "메시지 전송됨: " + message;
+        String routingKey = parts[1];
+        String message = String.join(" ", Arrays.copyOfRange(parts, 2, parts.length));
+        producer.send(message, routingKey);
+        return "메시지 전송됨 (Key: " + routingKey + "): " + message;
     }
 
     private void sendMessage(long chatId, String text) {

@@ -41,7 +41,14 @@ GitHub Actions를 통해 main 브랜치 푸시 시 자동으로 네이티브 이
 ### Docker 실행
 ```bash
 docker run -d \
+  -p 8080:8080 \
   -e AMQP_HOST=host.docker.internal \
   -e TELEGRAM_BOT_TOKEN=your_token \
+  -v $(pwd)/batch-data:/work \
   your-docker-user/batch-service:latest
 ```
+> **참고**: `-v $(pwd)/batch-data:/work` 옵션을 사용하면 배치 등록 정보(`batch-jobs.json`)가 호스트의 `batch-data` 폴더에 저장되어, 컨테이너를 재시작해도 데이터가 유지됩니다.
+
+### 헬스 체크
+- Liveness: `http://localhost:8080/q/health/live`
+- Readiness: `http://localhost:8080/q/health/ready`
