@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @ApplicationScoped
-@RegisterForReflection(targets = { ApiResponse.class, Update.class, Message.class, SendMessage.class })
+@RegisterForReflection(targets = { ApiResponse.class, Update.class, Message.class, SendMessage.class,
+        DefaultBotSession.class })
 public class TelegramBatchBot extends TelegramLongPollingBot {
 
     @ConfigProperty(name = "telegram-bot-token")
