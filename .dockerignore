@@ -1,6 +1,7 @@
 # Ignore build output by default, except native runner needed for Dockerfile.native/native-micro
 target
 !target/*-runner
+!target/quarkus-app
 .git
 .idea
 .vscode
