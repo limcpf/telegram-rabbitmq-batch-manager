@@ -17,9 +17,10 @@ services:
       retries: 3
 
   batch-service:
-    build:
-      context: .
-      dockerfile: src/main/docker/Dockerfile.multistage
+    image: limcpf/telegram-rabbitmq-batch-manager:v0.0.2
+    # build:
+    #   context: .
+    #   dockerfile: src/main/docker/Dockerfile.multistage
     container_name: batch-service
     ports:
       - "8080:8080"

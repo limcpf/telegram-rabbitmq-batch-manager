@@ -12,7 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.quarkus.runtime.annotations.RegisterForReflection;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.ApiResponse;
+
 @ApplicationScoped
+@RegisterForReflection(targets = { ApiResponse.class, Update.class, Message.class, SendMessage.class })
 public class TelegramBatchBot extends TelegramLongPollingBot {
 
     @ConfigProperty(name = "telegram-bot-token")
