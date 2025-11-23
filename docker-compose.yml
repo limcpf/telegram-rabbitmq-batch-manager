@@ -17,7 +17,7 @@ services:
       retries: 3
 
   batch-service:
-    image: limcpf/telegram-rabbitmq-batch-manager:v0.0.3
+    image: limcpf/telegram-rabbitmq-batch-manager:v0.0.4
     # build:
     #   context: .
     #   dockerfile: src/main/docker/Dockerfile.multistage

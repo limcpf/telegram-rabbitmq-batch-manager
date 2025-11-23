@@ -17,9 +17,9 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
+import org.telegram.telegrambots.meta.api.objects.serialization.MaybeInaccessibleMessageDeserializer;
+
 @ApplicationScoped
-@RegisterForReflection(targets = { ApiResponse.class, Update.class, Message.class, SendMessage.class,
-        DefaultBotSession.class })
 public class TelegramBatchBot extends TelegramLongPollingBot {
 
     @ConfigProperty(name = "telegram-bot-token")
