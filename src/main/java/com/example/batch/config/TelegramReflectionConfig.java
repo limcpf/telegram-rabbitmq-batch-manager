@@ -5,6 +5,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.*;
 import org.telegram.telegrambots.meta.api.objects.chatmember.ChatMember;
 import org.telegram.telegrambots.meta.api.objects.chatmember.serialization.ChatMemberDeserializer;
+import org.telegram.telegrambots.meta.api.objects.messageorigin.serialization.MessageOriginDeserializer;
 import org.telegram.telegrambots.meta.api.objects.polls.Poll;
 import org.telegram.telegrambots.meta.api.objects.polls.PollOption;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -15,8 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import org.telegram.telegrambots.meta.api.objects.serialization.MaybeInaccessibleMessageDeserializer;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
-@RegisterForReflection(
-    targets = {
+@RegisterForReflection(targets = {
         // Core
         ApiResponse.class,
         Update.class,
@@ -26,6 +26,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
         DefaultBotSession.class,
         MaybeInaccessibleMessageDeserializer.class,
         ChatMemberDeserializer.class,
+        MessageOriginDeserializer.class,
 
         // Common Objects
         MessageEntity.class,
@@ -41,19 +42,16 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
         PollOption.class,
         ChatMember.class,
         CallbackQuery.class,
-        
+
         // Keyboards
         ReplyKeyboardMarkup.class,
         InlineKeyboardMarkup.class,
         KeyboardRow.class,
         KeyboardButton.class,
         InlineKeyboardButton.class,
-        
+
         // Methods
         SendMessage.class
-    },
-    serialization = true,
-    ignoreNested = false
-)
+}, serialization = true, ignoreNested = false)
 public class TelegramReflectionConfig {
 }
